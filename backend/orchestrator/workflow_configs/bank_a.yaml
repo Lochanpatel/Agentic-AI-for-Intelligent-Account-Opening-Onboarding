@@ -1,0 +1,38 @@
+institution_id: bank_a
+onboarding_steps:
+  - id: doc_ingestion
+    config: {}
+
+  - id: kyc_check
+    config:
+      provider: jumio
+      fallback: onfido
+
+  - id: risk_scoring
+    config:
+      threshold: 0.65
+      model_version: v3.2
+
+  - id: aml_screen
+    config:
+      enabled: true
+      pep_check: true
+      pep_threshold: 0.50
+      lists:
+        - OFAC
+        - EU_SANCTIONS
+        - UN_SANCTIONS
+        - PEP_GLOBAL
+        - INTERPOL
+
+  - id: decision
+    config:
+      threshold: 0.65
+      strict_mode: true
+
+  - id: notification
+    config:
+      channels:
+        - email
+        - sms
+      provider: sendgrid

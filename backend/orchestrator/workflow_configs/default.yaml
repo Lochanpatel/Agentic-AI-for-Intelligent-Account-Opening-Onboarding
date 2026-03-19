@@ -1,0 +1,35 @@
+institution_id: default
+onboarding_steps:
+  - id: doc_ingestion
+    config: {}
+
+  - id: kyc_check
+    config:
+      provider: simulated
+      fallback: onfido
+
+  - id: risk_scoring
+    config:
+      threshold: 0.70
+      model_version: v1.0
+
+  - id: aml_screen
+    config:
+      enabled: true
+      pep_check: true
+      pep_threshold: 0.60
+      lists:
+        - OFAC
+        - EU_SANCTIONS
+        - UN_SANCTIONS
+        - PEP_GLOBAL
+
+  - id: decision
+    config:
+      threshold: 0.70
+
+  - id: notification
+    config:
+      channels:
+        - email
+      provider: simulated

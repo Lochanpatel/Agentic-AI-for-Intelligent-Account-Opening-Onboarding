@@ -1,0 +1,65 @@
+Collecting fastapi==0.111.0 (from -r requirements.txt (line 1))
+  Downloading fastapi-0.111.0-py3-none-any.whl.metadata (25 kB)
+Collecting uvicorn==0.30.1 (from uvicorn[standard]==0.30.1->-r requirements.txt (line 2))
+  Downloading uvicorn-0.30.1-py3-none-any.whl.metadata (6.3 kB)
+Collecting motor==3.6.0 (from -r requirements.txt (line 3))
+  Downloading motor-3.6.0-py3-none-any.whl.metadata (21 kB)
+Collecting pymongo==4.8.0 (from -r requirements.txt (line 4))
+  Downloading pymongo-4.8.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (22 kB)
+Collecting pydantic==2.7.1 (from -r requirements.txt (line 5))
+  Downloading pydantic-2.7.1-py3-none-any.whl.metadata (107 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 107.3/107.3 kB 951.8 kB/s eta 0:00:00
+Collecting pydantic-settings==2.3.3 (from -r requirements.txt (line 6))
+  Downloading pydantic_settings-2.3.3-py3-none-any.whl.metadata (3.3 kB)
+Collecting python-multipart==0.0.9 (from -r requirements.txt (line 7))
+  Downloading python_multipart-0.0.9-py3-none-any.whl.metadata (2.5 kB)
+Collecting python-dotenv==1.0.1 (from -r requirements.txt (line 8))
+  Downloading python_dotenv-1.0.1-py3-none-any.whl.metadata (23 kB)
+Collecting httpx==0.27.0 (from -r requirements.txt (line 9))
+  Downloading httpx-0.27.0-py3-none-any.whl.metadata (7.2 kB)
+Collecting PyYAML==6.0.1 (from -r requirements.txt (line 10))
+  Downloading PyYAML-6.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.1 kB)
+Collecting aiofiles==23.2.1 (from -r requirements.txt (line 11))
+  Downloading aiofiles-23.2.1-py3-none-any.whl.metadata (9.7 kB)
+Collecting openai==1.35.3 (from -r requirements.txt (line 12))
+  Downloading openai-1.35.3-py3-none-any.whl.metadata (21 kB)
+Collecting tenacity==8.3.0 (from -r requirements.txt (line 13))
+  Downloading tenacity-8.3.0-py3-none-any.whl.metadata (1.2 kB)
+Collecting pytest==8.2.2 (from -r requirements.txt (line 14))
+  Downloading pytest-8.2.2-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-asyncio==0.23.7 (from -r requirements.txt (line 15))
+  Downloading pytest_asyncio-0.23.7-py3-none-any.whl.metadata (3.9 kB)
+Collecting starlette<0.38.0,>=0.37.2 (from fastapi==0.111.0->-r requirements.txt (line 1))
+  Downloading starlette-0.37.2-py3-none-any.whl.metadata (5.9 kB)
+Collecting typing-extensions>=4.8.0 (from fastapi==0.111.0->-r requirements.txt (line 1))
+  Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting fastapi-cli>=0.0.2 (from fastapi==0.111.0->-r requirements.txt (line 1))
+  Downloading fastapi_cli-0.0.24-py3-none-any.whl.metadata (6.4 kB)
+Collecting jinja2>=2.11.2 (from fastapi==0.111.0->-r requirements.txt (line 1))
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting ujson!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0,>=4.0.1 (from fastapi==0.111.0->-r requirements.txt (line 1))
+  Downloading ujson-5.12.0-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (9.6 kB)
+Collecting orjson>=3.2.1 (from fastapi==0.111.0->-r requirements.txt (line 1))
+  Downloading orjson-3.11.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (41 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.0/42.0 kB 412.6 kB/s eta 0:00:00
+Collecting email_validator>=2.0.0 (from fastapi==0.111.0->-r requirements.txt (line 1))
+  Downloading email_validator-2.3.0-py3-none-any.whl.metadata (26 kB)
+Collecting click>=7.0 (from uvicorn==0.30.1->uvicorn[standard]==0.30.1->-r requirements.txt (line 2))
+  Downloading click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting h11>=0.8 (from uvicorn==0.30.1->uvicorn[standard]==0.30.1->-r requirements.txt (line 2))
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+INFO: pip is looking at multiple versions of motor to determine which version is compatible with other requirements. This could take a while.
+ERROR: Cannot install -r requirements.txt (line 3) and pymongo==4.8.0 because these package versions have conflicting dependencies.
+
+The conflict is caused by:
+    The user requested pymongo==4.8.0
+    motor 3.6.0 depends on pymongo<4.10 and >=4.9
+
+To fix this you could try to:
+1. loosen the range of package versions you've specified
+2. remove package versions to allow pip attempt to solve the dependency conflict
+
+ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts
+
+[notice] A new release of pip is available: 24.0 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
