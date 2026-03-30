@@ -1,12 +1,13 @@
 """Reviewer API — human-in-the-loop decision override"""
 from datetime import datetime
 from typing import Optional
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
 from core.database import get_db
 from models.session import OnboardingSession, SessionStatus
 from models.audit import write_audit
+from api.auth import get_current_admin
 
 router = APIRouter(prefix="/review", tags=["Reviewer"])
 
@@ -18,7 +19,7 @@ class ReviewDecisionRequest(BaseModel):
 
 
 @router.get("/queue")
-async def get_review_queue(limit: int = 50):
+async def get_review_queue(limit: int = 50, admin: str = Depends(get_current_admin)):
     """Get all sessions pending human review."""
     db = get_db()
     cursor = db["sessions"].find({"status": "MANUAL_REVIEW"}).sort("created_at", 1).limit(limit)
@@ -45,7 +46,7 @@ async def get_review_queue(limit: int = 50):
 
 
 @router.post("/{session_id}/decision")
-async def submit_review_decision(session_id: str, body: ReviewDecisionRequest):
+async def submit_review_decision(session_id: str, body: ReviewDecisionRequest, admin: str = Depends(get_current_admin)):
     """Human reviewer approves or rejects a MANUAL_REVIEW session."""
     db = get_db()
     raw = await db["sessions"].find_one({"_id": session_id})

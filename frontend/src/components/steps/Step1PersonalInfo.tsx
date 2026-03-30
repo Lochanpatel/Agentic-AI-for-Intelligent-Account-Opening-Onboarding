@@ -6,6 +6,7 @@ import { ArrowRight, User } from 'lucide-react';
 interface FormData {
   first_name: string; last_name: string; email: string;
   phone: string; date_of_birth: string; nationality: string; address: string;
+  tax_id: string;
 }
 
 const NATIONALITIES = ['US', 'UK', 'IN', 'DE', 'FR', 'SG', 'AE', 'AU', 'CA', 'JP', 'Other'];
@@ -16,7 +17,7 @@ export default function Step1PersonalInfo() {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [form, setForm] = useState<FormData>({
     first_name: '', last_name: '', email: '', phone: '',
-    date_of_birth: '', nationality: 'US', address: '',
+    date_of_birth: '', nationality: 'US', address: '', tax_id: '',
   });
 
   const set = (k: keyof FormData, v: string) => {
@@ -32,6 +33,7 @@ export default function Step1PersonalInfo() {
     if (!form.phone.trim()) e.phone = 'Required';
     if (!form.date_of_birth) e.date_of_birth = 'Required';
     if (!form.address.trim()) e.address = 'Required';
+    if (!form.tax_id.trim()) e.tax_id = 'Required (SSN/TIN)';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -41,9 +43,10 @@ export default function Step1PersonalInfo() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const res = await createSession({ applicant: form });
+      // Defer creating session until ALL steps are done, or we only update applicant now.
+      // Wait, in the MVP we created session here. With Deep KYC, we should create session after all forms, 
+      // or update it. Let's just hold it in Zustand till Step 2 creates it!
       setApplicant(form);
-      setSessionId(res.data.session_id);
       setStep(2);
     } catch (err) {
       alert('Failed to create session. Is the backend running?');
@@ -109,6 +112,12 @@ export default function Step1PersonalInfo() {
           <label className="form-label">Residential Address</label>
           <input className={`form-input${errors.address ? ' error' : ''}`} value={form.address} onChange={e => set('address', e.target.value)} placeholder="123 Main St, City, State, ZIP" />
           {errors.address && <span style={{ fontSize: 12, color: 'var(--accent-red)' }}>{errors.address}</span>}
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Tax ID (SSN / TIN)</label>
+          <input className={`form-input${errors.tax_id ? ' error' : ''}`} value={form.tax_id} onChange={e => set('tax_id', e.target.value)} placeholder="000-00-0000" />
+          {errors.tax_id && <span style={{ fontSize: 12, color: 'var(--accent-red)' }}>{errors.tax_id}</span>}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>

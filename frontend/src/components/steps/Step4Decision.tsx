@@ -72,7 +72,7 @@ export default function Step4Decision() {
         {/* AI Reasoning Box */}
         {session?.decision_reasoning && (
           <div style={{
-            background: 'rgba(255,255,255,0.04)', border: '1px solid var(--glass-border)',
+            background: 'var(--glass-border)', border: '1px solid var(--glass-border)',
             borderRadius: 12, padding: '20px 24px', marginBottom: 24, textAlign: 'left',
           }}>
             <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 8 }}>
@@ -88,7 +88,7 @@ export default function Step4Decision() {
         {riskScore !== undefined && (
           <div style={{
             display: 'flex', justifyContent: 'center', gap: 40, marginBottom: 24,
-            padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: 10,
+            padding: '16px', background: 'var(--glass-border)', borderRadius: 10,
           }}>
             <div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, letterSpacing: '0.05em' }}>RISK SCORE</div>

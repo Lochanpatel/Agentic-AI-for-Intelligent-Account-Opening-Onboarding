@@ -2,22 +2,27 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOnboardingStore } from '../store/onboardingStore';
+import { useLanguage } from '../contexts/LanguageContext';
 import Step1PersonalInfo from '../components/steps/Step1PersonalInfo';
+import Step2Financials from '../components/steps/Step2Financials';
 import Step2DocumentUpload from '../components/steps/Step2DocumentUpload';
+import Step2VideoVerification from '../components/steps/Step2VideoVerification';
 import Step3Processing from '../components/steps/Step3Processing';
 import Step4Decision from '../components/steps/Step4Decision';
-import { CheckCircle, User, FileText, Cpu, Award } from 'lucide-react';
-
-
-const STEPS = [
-  { label: 'Personal Info', Icon: User },
-  { label: 'Document', Icon: FileText },
-  { label: 'Processing', Icon: Cpu },
-  { label: 'Decision', Icon: Award },
-];
+import { CheckCircle, User, FileText, Cpu, Award, Briefcase, Video } from 'lucide-react';
 
 export default function Onboarding() {
   const { step } = useOnboardingStore();
+  const { t } = useLanguage();
+
+  const STEPS = [
+    { label: t('onboarding.steps.identity'), Icon: User },
+    { label: t('onboarding.steps.financials'), Icon: Briefcase },
+    { label: t('onboarding.steps.document'), Icon: FileText },
+    { label: t('onboarding.steps.video'), Icon: Video },
+    { label: t('onboarding.steps.processing'), Icon: Cpu },
+    { label: t('onboarding.steps.decision'), Icon: Award },
+  ];
 
   return (
     <div className="page" style={{ padding: '80px 24px 60px', maxWidth: 760, margin: '0 auto' }}>
@@ -28,10 +33,10 @@ export default function Onboarding() {
         style={{ textAlign: 'center', marginBottom: 40 }}
       >
         <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>
-          Open Your <span className="gradient-text">Account</span>
+          {t('onboarding.title')}
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>
-          Complete in under 3 minutes — AI-powered verification
+          {t('onboarding.subtitle')}
         </p>
       </motion.div>
 
@@ -43,16 +48,19 @@ export default function Onboarding() {
           const isActive = step === stepNum;
           return (
             <React.Fragment key={s.label}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}>
                 <div className={`step-dot ${isCompleted ? 'completed' : isActive ? 'active' : 'pending'}`}>
                   {isCompleted ? <CheckCircle size={14} /> : <span>{stepNum}</span>}
                 </div>
-                <span style={{ fontSize: 11, fontWeight: isActive ? 600 : 400, color: isActive ? 'var(--text-primary)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 11, fontWeight: isActive ? 600 : 500, color: isActive ? 'var(--text-primary)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                   {s.label}
                 </span>
               </div>
               {i < STEPS.length - 1 && (
-                <div className={`step-line ${isCompleted ? 'completed' : ''}`} style={{ margin: '0 8px', marginBottom: 20 }} />
+                <div style={{ flex: 1, position: 'relative', margin: '0 8px', height: 28, top: -10 }}>
+                  <div className="step-line" />
+                  <div className="step-line-fill" style={{ width: isCompleted ? '100%' : '0%' }} />
+                </div>
               )}
             </React.Fragment>
           );
@@ -69,9 +77,11 @@ export default function Onboarding() {
           transition={{ duration: 0.3 }}
         >
           {step === 1 && <Step1PersonalInfo />}
-          {step === 2 && <Step2DocumentUpload />}
-          {step === 3 && <Step3Processing />}
-          {step === 4 && <Step4Decision />}
+          {step === 2 && <Step2Financials />}
+          {step === 3 && <Step2DocumentUpload />}
+          {step === 4 && <Step2VideoVerification />}
+          {step === 5 && <Step3Processing />}
+          {step === 6 && <Step4Decision />}
         </motion.div>
       </AnimatePresence>
     </div>

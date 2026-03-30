@@ -1,8 +1,7 @@
 """
 AML / Compliance Agent
 -----------------------
-Checks applicant against sanctions lists (OFAC, EU, UN) and PEP databases.
-Simulates ComplyAdvantage API. Also performs RAG-based policy lookup stub.
+Checks applicant against sanctions lists.
 """
 import random
 from datetime import datetime

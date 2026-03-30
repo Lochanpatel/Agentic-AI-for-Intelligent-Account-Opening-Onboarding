@@ -1,4 +1,6 @@
+/// <reference types="vite/client" />
 import axios from 'axios';
+import { useAuthStore } from '../store/authStore';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -6,6 +8,14 @@ export const api = axios.create({
   baseURL: API_BASE,
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
+});
+
+api.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 // ─── Types ───────────────────────────────────────────────
@@ -86,3 +96,11 @@ export const submitReviewDecision = (sessionId: string, data: { decision: string
 
 export const getAuditTrail = (sessionId: string) =>
   api.get(`/audit/${sessionId}`);
+
+export const loginAdmin = (formData: FormData) =>
+  api.post<{ access_token: string; token_type: string; role: string }>('/auth/login', formData, {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+
+export const registerUser = (data: { email: string; password: string; first_name: string; last_name: string; role: string }) =>
+  api.post<{ message: string }>('/auth/register', data);

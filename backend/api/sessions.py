@@ -2,11 +2,12 @@
 import asyncio
 from datetime import datetime
 from typing import Optional, List
-from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Query, BackgroundTasks, Depends
 from pydantic import BaseModel
 
 from core.database import get_db
 from models.session import OnboardingSession, SessionStatus, ApplicantInfo
+from api.auth import get_current_admin
 
 router = APIRouter(prefix="/sessions", tags=["Sessions"])
 
@@ -55,6 +56,7 @@ async def list_sessions(
     institution_id: Optional[str] = Query(None),
     limit: int = Query(50, le=200),
     skip: int = Query(0),
+    admin: str = Depends(get_current_admin)
 ):
     """List sessions with optional filters (admin/reviewer use)."""
     db = get_db()
@@ -85,7 +87,7 @@ async def list_sessions(
 
 
 @router.get("/stats/overview")
-async def get_stats():
+async def get_stats(admin: str = Depends(get_current_admin)):
     """Dashboard statistics."""
     db = get_db()
     total = await db["sessions"].count_documents({})

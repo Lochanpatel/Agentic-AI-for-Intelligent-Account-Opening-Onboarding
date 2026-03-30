@@ -1,73 +1,109 @@
-# React + TypeScript + Vite
+# 🏦 Frontend - Agentic AI Account Opening
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Modern React frontend for AI-powered account onboarding with real-time agent status tracking and document upload.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** with TypeScript
+- **Vite** for fast development and building
+- **TailwindCSS** for styling
+- **Zustand** for state management
+- **React Query** for server state
+- **Framer Motion** for animations
+- **Lucide React** for icons
 
-## React Compiler
+## 🛠️ Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
+- Node.js 18+
+- npm or yarn
 
-## Expanding the ESLint configuration
+### Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Start development server
+npm run dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Build for production
+npm run build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Preview production build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env` file in the frontend directory:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_API_URL=http://localhost:8000
+VITE_APP_NAME=Agentic AI Onboarding
 ```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components
+│   ├── forms/          # Form components
+│   └── layout/         # Layout components
+├── pages/              # Page components
+│   ├── Landing.tsx     # Landing page
+│   ├── Onboarding.tsx  # Main onboarding flow
+│   ├── Reviewer.tsx    # Review dashboard
+│   └── Admin.tsx       # Admin panel
+├── store/              # Zustand stores
+│   ├── onboardingStore.ts
+│   └── authStore.ts
+├── api/                # API client
+│   └── client.ts
+├── hooks/              # Custom React hooks
+├── types/              # TypeScript definitions
+└── utils/              # Utility functions
+```
+
+## 🎯 Features
+
+- **Real-time Agent Status**: Live updates from backend agents
+- **Document Upload**: Drag-and-drop file upload with preview
+- **Progress Tracking**: Visual progress through onboarding steps
+- **Responsive Design**: Mobile-first responsive layout
+- **Error Handling**: Comprehensive error states and recovery
+- **Loading States**: Skeleton loaders and smooth transitions
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Manual Build
+
+```bash
+npm run build
+# Output in dist/ folder
+```
+
+## 🔧 Configuration
+
+The app communicates with the backend API through the configured `VITE_API_URL`. Make sure this points to your backend instance in production.
+
+## 🧪 Testing
+
+```bash
+# Run linting
+npm run lint
+
+# Type checking
+npm run type-check
+```
+
+---
+
+*Built with React · TypeScript · Vite · TailwindCSS*

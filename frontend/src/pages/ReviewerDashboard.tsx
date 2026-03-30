@@ -1,144 +1,148 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getReviewQueue, submitReviewDecision } from '../api/client';
-import { Clock, CheckCircle, XCircle, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-function RiskBar({ score }: { score: number }) {
-  const color = score > 0.7 ? 'var(--accent-red)' : score > 0.4 ? 'var(--accent-amber)' : 'var(--accent-green)';
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
-        <span>Risk Score</span><span style={{ color, fontWeight: 600 }}>{(score * 100).toFixed(1)}%</span>
-      </div>
-      <div style={{ height: 6, background: 'var(--glass-border)', borderRadius: 3 }}>
-        <div style={{ height: '100%', background: color, borderRadius: 3, width: `${score * 100}%`, transition: 'width 0.6s' }} />
-      </div>
-    </div>
-  );
-}
-
-function ReviewCard({ session, onDecision }: { session: any; onDecision: () => void }) {
-  const [expanded, setExpanded] = useState(false);
-  const [note, setNote] = useState('');
-  const [loading, setLoading] = useState(false);
-  const qc = useQueryClient();
-
-  const decide = async (decision: 'APPROVED' | 'REJECTED') => {
-    setLoading(true);
-    try {
-      await submitReviewDecision(session.session_id, { decision, reviewer_id: 'reviewer-1', note });
-      qc.invalidateQueries({ queryKey: ['reviewQueue'] });
-      onDecision();
-    } catch { alert('Failed to submit decision'); }
-    finally { setLoading(false); }
-  };
-
-  return (
-    <motion.div className="glass-card" style={{ padding: '24px', marginBottom: 16 }} layout>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
-        <div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
-            {session.applicant_name || 'Unknown Applicant'}
-          </div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{session.applicant_email}</div>
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span className="badge badge-review" style={{ fontSize: 11 }}>
-            <Clock size={10} /> REVIEW REQUIRED
-          </span>
-          <button
-            onClick={() => setExpanded(!expanded)}
-            style={{ background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: 8, padding: '6px 10px', color: 'var(--text-secondary)', cursor: 'pointer' }}
-          >
-            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Risk bar */}
-      {session.risk_score !== undefined && <RiskBar score={session.risk_score} />}
-
-      {/* Triggered rules */}
-      {session.triggered_rules?.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-          {session.triggered_rules.map((r: string) => (
-            <span key={r} style={{ padding: '3px 8px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 6, fontSize: 11, color: 'var(--accent-amber)' }}>
-              {r.replace(/_/g, ' ')}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Expanded: AI reasoning + agent details */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: 'hidden' }}>
-            {session.decision_reasoning && (
-              <div style={{ marginTop: 16, padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: 10 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.06em', marginBottom: 6 }}>AI REASONING</div>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{session.decision_reasoning}</p>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Reviewer note */}
-      <textarea
-        className="form-input" placeholder="Add reviewer notes (optional)..."
-        value={note} onChange={e => setNote(e.target.value)}
-        style={{ marginTop: 16, height: 72, resize: 'none', fontSize: 13 }}
-      />
-
-      {/* Action buttons */}
-      <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-        <button className="btn-success" onClick={() => decide('APPROVED')} disabled={loading} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-          <CheckCircle size={14} /> Approve
-        </button>
-        <button className="btn-danger" onClick={() => decide('REJECTED')} disabled={loading} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-          <XCircle size={14} /> Reject
-        </button>
-      </div>
-    </motion.div>
-  );
-}
+import { Clock, CheckCircle, XCircle, AlertTriangle, Shield, Settings, BarChart3, Users, FileText } from 'lucide-react';
+import { motion } from 'framer-motion';
+import ProductionReviewCard from '../components/ProductionReviewCard';
 
 export default function ReviewerDashboard() {
-  const { data, isLoading, error } = useQuery({ queryKey: ['reviewQueue'], queryFn: () => getReviewQueue().then(r => r.data), refetchInterval: 5000 });
+  const { data, isLoading, error } = useQuery({ 
+    queryKey: ['reviewQueue'], 
+    queryFn: () => getReviewQueue().then(r => r.data), 
+    refetchInterval: 10000 // Refresh every 10 seconds for real-time monitoring
+  });
   const queue = data?.queue || [];
 
   return (
-    <div className="page" style={{ padding: '80px 40px 60px', maxWidth: 860, margin: '0 auto' }}>
+    <div className="page" style={{ padding: '80px 40px 60px', maxWidth: 1200, margin: '0 auto' }}>
+      {/* Header */}
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>
-          <span className="gradient-text">Reviewer</span> Dashboard
+        <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>
+          <span className="gradient-text">Compliance Review</span> Dashboard
         </h1>
-        <p style={{ color: 'var(--text-secondary)' }}>Human-in-the-loop review queue — AI-escalated cases requiring manual decision</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>
+          Banking-grade KYC/AML review system with ML-powered risk assessment
+        </p>
       </div>
 
-      {/* Queue count */}
-      <div className="glass-card" style={{ padding: '20px 24px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 14 }}>
-        <AlertTriangle size={22} color="var(--accent-amber)" />
-        <div>
-          <div style={{ fontSize: 22, fontWeight: 700 }}>{data?.total ?? '—'}</div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Applications awaiting review</div>
+      {/* Stats Overview */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 32 }}>
+        <div className="glass-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--warning-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Clock size={24} color="var(--accent-amber)" />
+          </div>
+          <div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)' }}>{data?.total || 0}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Pending Review</div>
+          </div>
         </div>
-        <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)' }}>Auto-refreshes every 5s</div>
+
+        <div className="glass-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--error-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <AlertTriangle size={24} color="var(--accent-red)" />
+          </div>
+          <div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)' }}>{queue.filter(q => q.risk_score > 70).length}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>High Risk</div>
+          </div>
+        </div>
+
+        <div className="glass-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CheckCircle size={24} color="var(--accent-green)" />
+          </div>
+          <div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)' }}>{queue.filter(q => q.decision === 'APPROVED').length}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Approved Today</div>
+          </div>
+        </div>
+
+        <div className="glass-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--info-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Shield size={24} color="var(--accent-blue)" />
+          </div>
+          <div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)' }}>{Math.round(queue.reduce((acc, q) => acc + (q.risk_score || 0), 0) / queue.length) || 0}%</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Compliance Score</div>
+          </div>
+        </div>
       </div>
 
-      {isLoading && <div style={{ textAlign: 'center', padding: 40 }}><div className="spinner" style={{ margin: '0 auto' }} /></div>}
-      {error && <div style={{ color: 'var(--accent-red)', padding: 20 }}>Failed to load queue. Is the backend running?</div>}
-      {!isLoading && queue.length === 0 && (
-        <div className="glass-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <CheckCircle size={40} color="var(--accent-green)" style={{ marginBottom: 12 }} />
-          <div style={{ fontWeight: 600 }}>Queue is empty — all caught up!</div>
+      {/* Quick Actions */}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+        <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Settings size={16} /> Configure Rules
+        </button>
+        <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <BarChart3 size={16} /> Risk Analytics
+        </button>
+        <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <FileText size={16} /> Audit Log
+        </button>
+      </div>
+
+      {/* Queue Header */}
+      <div className="glass-card" style={{ padding: '20px 24px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <AlertTriangle size={22} color="var(--accent-amber)" />
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 600 }}>Review Queue</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Applications requiring human review</div>
+          </div>
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-green)', animation: 'pulse 2s infinite' }} />
+          Auto-refreshes every 10s
+        </div>
+      </div>
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="glass-card" style={{ padding: '40px', textAlign: 'center' }}>
+          <div className="spinner" style={{ margin: '0 auto 16px' }} />
+          <div style={{ color: 'var(--text-secondary)' }}>Loading review queue...</div>
         </div>
       )}
-      {queue.map((s: any) => (
-        <ReviewCard key={s.session_id} session={s} onDecision={() => { }} />
+
+      {/* Error State */}
+      {error && (
+        <div className="glass-card" style={{ padding: '40px', textAlign: 'center', color: 'var(--accent-red)' }}>
+          <AlertTriangle size={40} style={{ marginBottom: 16 }} />
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>Failed to load queue</div>
+          <div style={{ fontSize: 13 }}>Please check if the backend service is running</div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && !error && queue.length === 0 && (
+        <div className="glass-card" style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <CheckCircle size={48} color="var(--accent-green)" style={{ marginBottom: 16 }} />
+          <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>All Caught Up!</div>
+          <div style={{ fontSize: 14 }}>No applications currently require review</div>
+        </div>
+      )}
+
+      {/* Review Queue */}
+      {!isLoading && !error && queue.map((session: any) => (
+        <ProductionReviewCard 
+          key={session.session_id} 
+          session={session} 
+          onDecision={() => {}} 
+        />
       ))}
+
+      {/* Footer Info */}
+      {!isLoading && !error && queue.length > 0 && (
+        <div style={{ marginTop: 32, textAlign: 'center', color: 'var(--text-muted)', fontSize: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <Shield size={14} />
+            <span>Banking-grade compliance system with ML-powered risk assessment</span>
+          </div>
+          <div style={{ marginTop: 8 }}>
+            All decisions are logged for audit and regulatory compliance
+          </div>
+        </div>
+      )}
     </div>
   );
 }

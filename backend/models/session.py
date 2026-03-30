@@ -39,6 +39,13 @@ class ApplicantInfo(BaseModel):
     date_of_birth: str
     nationality: str
     address: str
+    # Processed Financial & Identity Intelligence
+    tax_id: Optional[str] = None
+    employment_status: Optional[str] = None
+    annual_income: Optional[int] = None
+    source_of_funds: Optional[str] = None
+    expected_monthly_volume: Optional[int] = None
+    pep_declaration: Optional[bool] = None
 
 
 class OnboardingSession(BaseModel):

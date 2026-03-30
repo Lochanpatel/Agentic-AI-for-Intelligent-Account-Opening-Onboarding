@@ -4,8 +4,7 @@ Decision Agent
 Synthesises all prior agent outputs into a final underwriting decision:
   APPROVED | REJECTED | MANUAL_REVIEW
 
-Uses GPT-4o when OPENAI_API_KEY is set, otherwise applies deterministic logic.
-Always produces a plain-English reasoning string.
+
 """
 from datetime import datetime
 from typing import Any, Dict
@@ -44,7 +43,7 @@ class DecisionAgent(BaseOnboardingAgent):
 
             threshold = config.get("threshold", 0.70)
 
-            # Hard rejects
+            # Hard rejects - immediate rejection
             if not aml_clear:
                 decision = "REJECTED"
                 reasoning = (
@@ -57,13 +56,19 @@ class DecisionAgent(BaseOnboardingAgent):
                     "Application REJECTED: Submitted identity document has expired. "
                     "Applicant must reapply with a valid document."
                 )
+            elif risk_score >= 0.85:  # Very high risk - auto reject
+                decision = "REJECTED"
+                reasoning = (
+                    f"Application REJECTED: Risk score {risk_score:.2f} exceeds auto-reject threshold (0.85). "
+                    f"Multiple high-risk indicators detected. Application not suitable for approval."
+                )
             elif not kyc_verified:
                 decision = "MANUAL_REVIEW"
                 reasoning = (
                     "Identity verification confidence is below acceptable threshold. "
-                    "Routing to human reviewer for manual identity check."
+                    "Routing to human reviewer for manual identity check and verification."
                 )
-            elif risk_score >= threshold:
+            elif risk_score >= threshold:  # Above threshold - manual review
                 decision = "MANUAL_REVIEW"
                 rules_text = ", ".join(triggered_rules) if triggered_rules else "elevated risk signals"
                 reasoning = (

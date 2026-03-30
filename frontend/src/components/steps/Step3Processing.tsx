@@ -77,7 +77,8 @@ export default function Step3Processing() {
         setSession(res.data);
         if (TERMINAL_STATUSES.includes(res.data.status)) {
           clearInterval(interval);
-          setTimeout(() => setStep(4), 1000);
+          console.log('Processing complete, moving to decision step. Status:', res.data.status);
+          setTimeout(() => setStep(6), 1000); // Go to decision step (6), not video step (4)
         }
       } catch { }
     };
@@ -117,7 +118,7 @@ export default function Step3Processing() {
       </div>
 
       {session?.risk_score !== undefined && (
-        <div style={{ marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.03)', borderRadius: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginTop: 24, padding: '16px 20px', background: 'var(--glass-border)', borderRadius: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: 14, color: 'var(--text-secondary)', fontWeight: 500 }}>Overall Risk Score</span>
           <span style={{
             fontSize: 20, fontWeight: 700,

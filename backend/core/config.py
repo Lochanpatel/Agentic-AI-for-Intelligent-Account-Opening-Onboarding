@@ -3,9 +3,14 @@ from typing import List
 
 
 class Settings(BaseSettings):
-    # App
-    environment: str = "development"
-    secret_key: str = "dev-secret-key"
+    # App config
+    APP_NAME: str = "OnboardAI"
+    VERSION: str = "v1"
+    ENVIRONMENT: str = "development"
+    APP_SECRET: str = "super-secret-key-change-in-prod"
+    ADMIN_EMAIL: str = "admin@board.ai"
+    ADMIN_PASSWORD: str = "secureadmin123"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # 24 hours
     upload_dir: str = "./uploads"
     max_upload_size_mb: int = 10
 

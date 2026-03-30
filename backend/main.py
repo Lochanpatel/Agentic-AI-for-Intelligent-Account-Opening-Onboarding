@@ -7,8 +7,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
-from core.database import connect_db, close_db
-from api import sessions, upload, reviewer, audit
+from core.database import connect_db, close_db, get_db
+from core.security import get_password_hash
+from api import sessions, upload, reviewer, audit, auth
 
 
 @asynccontextmanager
@@ -17,6 +18,20 @@ async def lifespan(app: FastAPI):
     os.makedirs(settings.upload_dir, exist_ok=True)
     await connect_db()
     print(f"✅ Connected to MongoDB at {settings.mongodb_url}")
+
+    # Initialize Admin User if missing
+    db = get_db()
+    existing_admin = await db.users.find_one({"role": "admin"})
+    if not existing_admin:
+        hashed_pw = get_password_hash(settings.ADMIN_PASSWORD)
+        await db.users.insert_one({
+            "email": settings.ADMIN_EMAIL,
+            "hashed_password": hashed_pw,
+            "role": "admin",
+            "is_active": True
+        })
+        print(f"✅ Created default admin user from env: {settings.ADMIN_EMAIL}")
+
     yield
     # Shutdown
     await close_db()
@@ -49,6 +64,7 @@ app.include_router(sessions.router)
 app.include_router(upload.router)
 app.include_router(reviewer.router)
 app.include_router(audit.router)
+app.include_router(auth.router)
 
 
 @app.get("/health", tags=["Health"])
