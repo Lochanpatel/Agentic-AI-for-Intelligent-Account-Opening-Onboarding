@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: agentic-ai-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: MONGODB_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: ENVIRONMENT
+        value: production
+      - key: SIMULATE_OCR
+        value: true
+      - key: SIMULATE_KYC
+        value: true
+      - key: SIMULATE_AML
+        value: true
+      - key: ALLOWED_ORIGINS
+        value: https://your-vercel-app.vercel.app
