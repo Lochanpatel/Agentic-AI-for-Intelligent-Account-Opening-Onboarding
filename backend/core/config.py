@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "OnboardAI"
     VERSION: str = "v1"
     ENVIRONMENT: str = "development"
-    APP_SECRET: str = "super-secret-key-change-in-prod"
+    SECRET_KEY: str = "your-secret-key-change-in-production"
     ADMIN_EMAIL: str = "admin@board.ai"
     ADMIN_PASSWORD: str = "secureadmin123"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # 24 hours
