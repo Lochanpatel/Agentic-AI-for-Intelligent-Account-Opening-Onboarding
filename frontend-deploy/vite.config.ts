@@ -6,13 +6,10 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      input: {
-        main: './src/main.tsx'
-      },
       output: {
-        entryFileNames: `assets/app-[hash].js`,
-        chunkFileNames: `assets/app-[hash].js`,
-        assetFileNames: `assets/app-[hash].[ext]`
+        entryFileNames: `assets/[name]-[hash].js`,
+        chunkFileNames: `assets/[name]-[hash].js`,
+        assetFileNames: `assets/[name]-[hash].[ext]`
       }
     }
   }
