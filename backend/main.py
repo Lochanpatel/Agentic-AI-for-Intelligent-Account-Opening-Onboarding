@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
     # Startup
     os.makedirs(settings.upload_dir, exist_ok=True)
     await connect_db()
-    print(f"✅ Connected to MongoDB at {settings.mongodb_url}")
+    print(f"✅ Connected to MongoDB at {settings.MONGODB_URL}")
 
     # Initialize Admin User if missing
     db = get_db()
@@ -73,7 +73,7 @@ async def health_check():
         "status": "healthy",
         "service": "onboarding-api",
         "version": "1.0.0",
-        "environment": settings.environment,
+        "environment": settings.ENVIRONMENT,
     }
 
 

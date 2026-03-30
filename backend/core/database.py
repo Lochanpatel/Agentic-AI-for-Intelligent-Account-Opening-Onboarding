@@ -6,7 +6,7 @@ _client: AsyncIOMotorClient = None
 
 async def connect_db():
     global _client
-    _client = AsyncIOMotorClient(settings.mongodb_url)
+    _client = AsyncIOMotorClient(settings.MONGODB_URL)
     # Ping to verify connection
     await _client.admin.command("ping")
 
@@ -18,4 +18,4 @@ async def close_db():
 
 
 def get_db():
-    return _client[settings.mongodb_db]
+    return _client[settings.MONGODB_DB]

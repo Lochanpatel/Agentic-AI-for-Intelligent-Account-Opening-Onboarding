@@ -15,17 +15,17 @@ class Settings(BaseSettings):
     max_upload_size_mb: int = 10
 
     # MongoDB
-    mongodb_url: str = "mongodb://localhost:27017"
-    mongodb_db: str = "onboarding_db"
+    MONGODB_URL: str = "mongodb://localhost:27017"
+    MONGODB_DB: str = "onboarding_db"
 
     # OpenAI
-    openai_api_key: str = ""
-    openai_model: str = "gpt-4o"
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o"
 
     # Simulation flags
-    simulate_ocr: bool = True
-    simulate_kyc: bool = True
-    simulate_aml: bool = True
+    SIMULATE_OCR: bool = True
+    SIMULATE_KYC: bool = True
+    SIMULATE_AML: bool = True
 
     # CORS
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
