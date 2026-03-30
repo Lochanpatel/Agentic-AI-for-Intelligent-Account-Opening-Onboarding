@@ -28,14 +28,14 @@ class Settings(BaseSettings):
     simulate_aml: bool = True
 
     # CORS
-    allowed_origins: str = "http://localhost:3000,http://localhost:5173"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
 
     # Institution
     default_institution_id: str = "default"
 
     @property
     def allowed_origins_list(self) -> List[str]:
-        return [o.strip() for o in self.allowed_origins.split(",")]
+        return [o.strip() for o in self.ALLOWED_ORIGINS.split(",")]
 
     class Config:
         env_file = ".env"
