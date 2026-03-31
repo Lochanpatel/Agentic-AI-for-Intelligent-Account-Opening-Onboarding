@@ -33,6 +33,27 @@ class Settings(BaseSettings):
     # Institution
     default_institution_id: str = "default"
 
+    # Lowercase aliases used by agent code
+    @property
+    def simulate_ocr(self) -> bool:
+        return self.SIMULATE_OCR
+
+    @property
+    def simulate_kyc(self) -> bool:
+        return self.SIMULATE_KYC
+
+    @property
+    def simulate_aml(self) -> bool:
+        return self.SIMULATE_AML
+
+    @property
+    def openai_api_key(self) -> str:
+        return self.OPENAI_API_KEY
+
+    @property
+    def openai_model(self) -> str:
+        return self.OPENAI_MODEL
+
     @property
     def allowed_origins_list(self) -> List[str]:
         return [o.strip() for o in self.ALLOWED_ORIGINS.split(",")]
