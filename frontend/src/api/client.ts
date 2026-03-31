@@ -2,8 +2,8 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-// Force rebuild - 2024-03-31-00:32 - CACHE CLEAR
-const API_BASE = 'https://agentic-ai-backend-zjj6.onrender.com';
+// API base — reads VITE_API_URL from build-time env (set in Vercel dashboard)
+const API_BASE = import.meta.env.VITE_API_URL || 'https://agentic-ai-backend-zjj6.onrender.com';
 
 export const api = axios.create({
   baseURL: API_BASE,
